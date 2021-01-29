@@ -5,130 +5,167 @@ using UnityEngine;
 public class HandController : MonoBehaviour
 {
     public Vector3 movArea;
-    public GameObject arm;
-    private Vector3 handPos;
-    private float x, y, z, rotX;
+    public Transform arm, shoulder;
+    private Vector3 targetPos;
+    private float x, y, z, targetRot;
     public Animator aThumb, aIndex, aMiddle, aRing, aPinky;
-    private int fingers1, fingers2, fingers3;
-    public GrabTrigger grabArea1, grabArea2, grabArea3;
+    private int fingers;
+    public GrabTrigger grabArea;
     public Rigidbody wrist;
+    public float smoothTime = 0.2F;
+    private Vector3 armVelocity = Vector3.zero;
+    private float handSpeed = 0.025f;
     private void Start()
     {
-        //Cursor.lockState = CursorLockMode.Confined;
+        Cursor.lockState = CursorLockMode.Locked;
     }
 
     private void Update()
     {
-        //Debug.Log(Input.mouseScrollDelta);
-
-
+        Debug.Log(Input.GetAxis("Mouse X"));
         if (Input.GetMouseButton(1))
         {
-            rotX = map((Input.mousePosition.x / Screen.width), 0, 1, -180, 180);
-            arm.transform.localEulerAngles = new Vector3(rotX, -90, 0);
+            targetRot = targetRot + (Input.GetAxis("Mouse X"));
+            shoulder.localEulerAngles = new Vector3(targetRot, -90f, 0f);
         }
         else
         {
-            x = map((Input.mousePosition.x / Screen.width), 0, 1, 0, movArea.x);
-            z = map((Input.mousePosition.y / Screen.height), 0, 1, 0, movArea.z) - 0.7f;
+            x = x + (Input.GetAxis("Mouse X") * handSpeed);
+            if (x > movArea.x)
+            {
+                x = movArea.x;
+            }
+            else if (x < (movArea.x * -1))
+            {
+                x = movArea.x * -1;
+            }
+
+            z = z + (Input.GetAxis("Mouse Y") * handSpeed);
+            if (z > movArea.z)
+            {
+                z = movArea.z;
+            }
+            else if (z < (movArea.z * -1))
+            {
+                z = movArea.z * -1;
+            }
         }
+            
+        y = y + (Input.mouseScrollDelta.y * handSpeed);
+        if (y > movArea.y)
+        {
+            y = movArea.y;
+        }
+        else if (y < 0)
+        {
+            y = 0;
+        }
+        
 
-        y = y + (Input.mouseScrollDelta.y * 0.05f);
-        if (y <= 0.1f) y = 0.1f;
-        else if (y > movArea.y) y = movArea.y;
-
-        handPos = new Vector3(x, y, z);
-
-        arm.transform.position = handPos;
+        targetPos = new Vector3(x, y, z);
+        arm.position = Vector3.SmoothDamp(arm.position, targetPos, ref armVelocity, smoothTime);
 
         if (Input.GetKeyDown("q") || Input.GetKeyDown("a"))
         {
             aPinky.SetBool("Close", true);
-            fingers1 = fingers1 + 1;
-            PickUp(grabArea1.objectInRange);
+            fingers = fingers + 1;
+            PickUp();
 
         }
         else if (Input.GetKeyUp("q") || Input.GetKeyUp("a"))
         {
             aPinky.SetBool("Close", false);
-            fingers1 = fingers1 - 1;
-            Release(grabArea1.objectInRange);
+            fingers = fingers - 1;
+            Release();
 
         }
 
         if (Input.GetKeyDown("s"))
         {
             aRing.SetBool("Close", true);
-            fingers1 = fingers1 + 1;
-            PickUp(grabArea1.objectInRange);
+            fingers = fingers + 1;
+            PickUp();
 
         }
         else if (Input.GetKeyUp("s"))
         {
             aRing.SetBool("Close", false);
-            fingers1 = fingers1 - 1;
-            Release(grabArea1.objectInRange);
+            fingers = fingers - 1;
+            Release();
 
         }
 
         if (Input.GetKeyDown("d"))
         {
             aMiddle.SetBool("Close", true);
-            fingers2 = fingers2 + 1;
-            PickUp(grabArea2.objectInRange);
+            fingers = fingers + 1;
+            PickUp();
 
         }
         else if (Input.GetKeyUp("d"))
         {
             aMiddle.SetBool("Close", false);
-            fingers2 = fingers2 - 1;
-            Release(grabArea2.objectInRange);
+            fingers = fingers - 1;
+            Release();
 
         }
 
         if (Input.GetKeyDown("f"))
         {
             aIndex.SetBool("Close", true);
-            fingers2 = fingers2 + 1;
-            PickUp(grabArea2.objectInRange);
+            fingers = fingers + 1;
+            PickUp();
         }
         else if (Input.GetKeyUp("f"))
         {
             aIndex.SetBool("Close", false);
-            fingers2 = fingers2 - 1;
-            Release(grabArea2.objectInRange);
+            fingers = fingers - 1;
+            Release();
         }
 
         if (Input.GetKeyDown("space"))
         {
             aThumb.SetBool("Close", true);
-            fingers3 = fingers3 + 1;
-            PickUp(grabArea3.objectInRange);
+            fingers = fingers + 1;
+            PickUp();
         }
         else if (Input.GetKeyUp("space"))
         {
             aThumb.SetBool("Close", false);
-            fingers3 = fingers3 - 1;
-            Release(grabArea3.objectInRange);
+            fingers = fingers - 1;
+            Release();
         }
     }
-    public void PickUp(GameObject obj)
+    public void PickUp()
     {
-        if (obj != null) ;
+        if (grabArea.objectInRange != null) ;
         else return;
-        if (obj.GetComponents<FixedJoint>().Length < 1)
+        if (grabArea.objectInRange.GetComponents<FixedJoint>().Length < 1)
         {
-            FixedJoint fj = obj.AddComponent<FixedJoint>();
+            FixedJoint fj = grabArea.objectInRange.AddComponent<FixedJoint>();
             fj.connectedBody = wrist;
-            fj.breakForce = 600;
-            fj.breakTorque = 600;
+            fj.breakForce = 150;
+            fj.breakTorque = 150;
+        }
+        else
+        {
+            grabArea.objectInRange.GetComponent<FixedJoint>().breakForce = grabArea.objectInRange.GetComponent<FixedJoint>().breakForce + 150;
+            grabArea.objectInRange.GetComponent<FixedJoint>().breakTorque = grabArea.objectInRange.GetComponent<FixedJoint>().breakTorque + 150;
         }
     }
-    public void Release(GameObject obj)
+    public void Release()
     {
-        if (obj != null)
+        if (grabArea.objectInRange != null)
         {
-            Destroy(obj.GetComponent<FixedJoint>());
+            if(fingers == 0)
+            {
+                Destroy(grabArea.objectInRange.GetComponent<FixedJoint>());
+            }
+            else if (fingers > 0)
+            {
+                grabArea.objectInRange.GetComponent<FixedJoint>().breakForce = grabArea.objectInRange.GetComponent<FixedJoint>().breakForce - 150;
+                grabArea.objectInRange.GetComponent<FixedJoint>().breakTorque = grabArea.objectInRange.GetComponent<FixedJoint>().breakTorque - 150;
+            }
         }
     }
     public static float map(float value, float leftMin, float leftMax, float rightMin, float rightMax)
