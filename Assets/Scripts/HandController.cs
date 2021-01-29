@@ -5,32 +5,57 @@ using UnityEngine;
 public class HandController : MonoBehaviour
 {
     public Vector3 movArea;
-    public Transform arm, shoulder;
+    public Transform arm, shoulder, wrist;
     private Vector3 targetPos;
-    private float x, y, z, targetRot;
+    private float x, y, z;
+    private float sideRot, frontRot;
     public Animator aThumb, aIndex, aMiddle, aRing, aPinky;
     private int fingers;
     public GrabTrigger grabArea;
-    public Rigidbody wrist;
+    public MaxGrabArea maxGrabArea;
+    public Rigidbody wristRB;
     public float smoothTime = 0.2F;
     private Vector3 armVelocity = Vector3.zero;
     private float handSpeed = 0.025f;
+    private float handSpeedMod = 1f;
+    private float grabStrength = 120;
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
+        x = transform.position.x;
+        y = transform.position.y;
+        z = transform.position.z;
     }
 
     private void Update()
     {
-        Debug.Log(Input.GetAxis("Mouse X"));
-        if (Input.GetMouseButton(1))
+        if (Input.GetMouseButton(0))
         {
-            targetRot = targetRot + (Input.GetAxis("Mouse X"));
-            shoulder.localEulerAngles = new Vector3(targetRot, -90f, 0f);
+            handSpeedMod = 0.3f;
         }
         else
         {
-            x = x + (Input.GetAxis("Mouse X") * handSpeed);
+            handSpeedMod = 1;
+        }
+
+        if (Input.GetMouseButton(1))
+        {
+            sideRot = sideRot + (Input.GetAxis("Mouse X"));
+            shoulder.localEulerAngles = new Vector3(sideRot, -90f, 0f);
+            frontRot = frontRot + (Input.GetAxis("Mouse Y"));
+            if(frontRot > 90f)
+            {
+                frontRot = 90f;
+            }
+            else if(frontRot < -90f)
+            {
+                frontRot = -90f;
+            }
+            wrist.localEulerAngles = new Vector3(wrist.localEulerAngles.x, wrist.localEulerAngles.y, frontRot);
+        }
+        else
+        {
+            x = x + (Input.GetAxis("Mouse X") * handSpeed * handSpeedMod);
             if (x > movArea.x)
             {
                 x = movArea.x;
@@ -40,7 +65,7 @@ public class HandController : MonoBehaviour
                 x = movArea.x * -1;
             }
 
-            z = z + (Input.GetAxis("Mouse Y") * handSpeed);
+            z = z + (Input.GetAxis("Mouse Y") * handSpeed * handSpeedMod);
             if (z > movArea.z)
             {
                 z = movArea.z;
@@ -50,8 +75,7 @@ public class HandController : MonoBehaviour
                 z = movArea.z * -1;
             }
         }
-            
-        y = y + (Input.mouseScrollDelta.y * handSpeed);
+        y = y + (Input.mouseScrollDelta.y * handSpeed * handSpeedMod);
         if (y > movArea.y)
         {
             y = movArea.y;
@@ -60,7 +84,7 @@ public class HandController : MonoBehaviour
         {
             y = 0;
         }
-        
+
 
         targetPos = new Vector3(x, y, z);
         arm.position = Vector3.SmoothDamp(arm.position, targetPos, ref armVelocity, smoothTime);
@@ -143,28 +167,32 @@ public class HandController : MonoBehaviour
         if (grabArea.objectInRange.GetComponents<FixedJoint>().Length < 1)
         {
             FixedJoint fj = grabArea.objectInRange.AddComponent<FixedJoint>();
-            fj.connectedBody = wrist;
-            fj.breakForce = 150;
-            fj.breakTorque = 150;
+            fj.connectedBody = wristRB;
+            fj.breakForce = 400;
+            fj.breakTorque = 400;
         }
         else
         {
-            grabArea.objectInRange.GetComponent<FixedJoint>().breakForce = grabArea.objectInRange.GetComponent<FixedJoint>().breakForce + 150;
-            grabArea.objectInRange.GetComponent<FixedJoint>().breakTorque = grabArea.objectInRange.GetComponent<FixedJoint>().breakTorque + 150;
+            grabArea.objectInRange.GetComponent<FixedJoint>().breakForce = grabArea.objectInRange.GetComponent<FixedJoint>().breakForce + grabStrength;
+            grabArea.objectInRange.GetComponent<FixedJoint>().breakTorque = grabArea.objectInRange.GetComponent<FixedJoint>().breakTorque + grabStrength;
         }
     }
     public void Release()
     {
-        if (grabArea.objectInRange != null)
+        if (fingers <= 0)
         {
-            if(fingers == 0)
+            foreach (GameObject obj in maxGrabArea.objectsInRange)
             {
-                Destroy(grabArea.objectInRange.GetComponent<FixedJoint>());
+                Destroy(obj.GetComponent<FixedJoint>());
             }
-            else if (fingers > 0)
+            fingers = 0;
+        }
+        else if (grabArea.objectInRange != null)
+        {
+             if (grabArea.objectInRange.GetComponent<FixedJoint>() != null)
             {
-                grabArea.objectInRange.GetComponent<FixedJoint>().breakForce = grabArea.objectInRange.GetComponent<FixedJoint>().breakForce - 150;
-                grabArea.objectInRange.GetComponent<FixedJoint>().breakTorque = grabArea.objectInRange.GetComponent<FixedJoint>().breakTorque - 150;
+                grabArea.objectInRange.GetComponent<FixedJoint>().breakForce = grabArea.objectInRange.GetComponent<FixedJoint>().breakForce - grabStrength;
+                grabArea.objectInRange.GetComponent<FixedJoint>().breakTorque = grabArea.objectInRange.GetComponent<FixedJoint>().breakTorque - grabStrength;
             }
         }
     }
