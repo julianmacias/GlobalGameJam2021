@@ -5723,6 +5723,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5091298727210749562, guid: 3f3973f16cdc31049913b1cd152cb550,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 477469986}
+    - target: {fileID: 5091298727210749562, guid: 3f3973f16cdc31049913b1cd152cb550,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ResumeGame
+      objectReference: {fileID: 0}
     - target: {fileID: 5091298727552048773, guid: 3f3973f16cdc31049913b1cd152cb550,
         type: 3}
       propertyPath: m_Name

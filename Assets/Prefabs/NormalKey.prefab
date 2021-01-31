@@ -138,12 +138,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e42dc08db2a8cda4c8d6f1260211d9dd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 0}
   soundArray:
   - {fileID: 8300000, guid: 750cf30053138af42ba271846e6e3c72, type: 3}
   - {fileID: 8300000, guid: 3ef2d7393c6353848a25b4dca03159eb, type: 3}
   - {fileID: 8300000, guid: a4e9f9b508f6f3f458da0429e08d3246, type: 3}
-  mag: 4
+  mag: 3
 --- !u!1001 &5237958005369583189
 PrefabInstance:
   m_ObjectHideFlags: 0

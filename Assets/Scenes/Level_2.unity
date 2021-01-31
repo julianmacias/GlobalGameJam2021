@@ -98,7 +98,7 @@ LightmapSettings:
     m_TrainingDataDestination: TrainingData
     m_LightProbeSampleCountMultiplier: 4
   m_LightingDataAsset: {fileID: 0}
-  m_UseShadowmask: 1
+  m_UseShadowmask: 0
 --- !u!196 &4
 NavMeshSettings:
   serializedVersion: 2
@@ -5271,7 +5271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c857a1bc48a147449bc551f931c904d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextLevel: Level3
+  nextLevel: Level_3
   transition: {fileID: 4773762729382296395}
   delay: 4
 --- !u!65 &1441209584
@@ -7835,6 +7835,16 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 5091298727210749562, guid: 3f3973f16cdc31049913b1cd152cb550,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 477469986}
+    - target: {fileID: 5091298727210749562, guid: 3f3973f16cdc31049913b1cd152cb550,
+        type: 3}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: ResumeGame
+      objectReference: {fileID: 0}
     - target: {fileID: 5091298727552048773, guid: 3f3973f16cdc31049913b1cd152cb550,
         type: 3}
       propertyPath: m_Name

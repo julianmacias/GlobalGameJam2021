@@ -146,9 +146,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c857a1bc48a147449bc551f931c904d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  nextLevel: Level3
+  nextLevel: Credits
   transition: {fileID: 0}
-  delay: 4
+  delay: 1
 --- !u!82 &3049077429696743314
 AudioSource:
   m_ObjectHideFlags: 0

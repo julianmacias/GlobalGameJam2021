@@ -21,7 +21,7 @@ public class KillPlane : MonoBehaviour
             else if(other.name == "blackSheep")
             {
                 Destroy(other.transform.parent.gameObject);
-                Instantiate(blackSheep, respawnPoint.position, Quaternion.Euler(Random.Range(-180f, 180f), Random.Range(-180f, 180f), Random.Range(-180f, 180f)));
+                GameObject bSheep = Instantiate(blackSheep, respawnPoint.position, Quaternion.Euler(Random.Range(-180f, 180f), Random.Range(-180f, 180f), Random.Range(-180f, 180f)));
             }
             else
             Destroy(other.gameObject);
