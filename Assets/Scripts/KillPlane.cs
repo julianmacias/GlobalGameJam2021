@@ -4,12 +4,16 @@ using UnityEngine;
 
 public class KillPlane : MonoBehaviour
 {
+    public Transform respawnPoint;
     private void OnTriggerEnter(Collider other)
     {
         if(other.name == "Key")
         {
-            Debug.Log("The key is lost");
+            other.gameObject.transform.position = respawnPoint.position;
         }
-        Destroy(other.gameObject);
+        else
+        {
+            Destroy(other.gameObject);
+        }
     }
 }

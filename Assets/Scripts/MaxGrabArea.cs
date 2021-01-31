@@ -21,6 +21,10 @@ public class MaxGrabArea : MonoBehaviour
                 Destroy(other.gameObject.GetComponent<FixedJoint>());
             }
             objectsInRange.Remove(other.gameObject);
+            if (other.name == "Cereal_box")
+            {
+                other.gameObject.GetComponent<CerealBox>().pickedUp = false;
+            }
         }
     }
 }

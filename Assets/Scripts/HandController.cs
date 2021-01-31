@@ -19,9 +19,13 @@ public class HandController : MonoBehaviour
     private float handSpeed = 0.025f;
     private float handSpeedMod = 1f;
     private float grabStrength = 120;
+    public bool playIntro;
     private void Start()
     {
-        Cursor.lockState = CursorLockMode.Locked;
+        if (playIntro)
+        {
+            Destroy(GetComponent<Animator>());
+        }
         x = transform.position.x;
         y = transform.position.y;
         z = transform.position.z;
@@ -170,6 +174,10 @@ public class HandController : MonoBehaviour
             fj.connectedBody = wristRB;
             fj.breakForce = 400;
             fj.breakTorque = 400;
+            if (grabArea.objectInRange.name == "Cereal_box")
+            {
+                grabArea.objectInRange.gameObject.GetComponent<CerealBox>().pickedUp = true;
+            }
         }
         else
         {
