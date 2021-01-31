@@ -18,8 +18,9 @@ public class HandController : MonoBehaviour
     private Vector3 armVelocity = Vector3.zero;
     private float handSpeed = 0.025f;
     private float handSpeedMod = 1f;
-    private float grabStrength = 120;
+    private float grabStrength = 200;
     public bool playIntro;
+    public AudioSource[] fingerSnd;
     private void Start()
     {
         if (playIntro)
@@ -98,7 +99,7 @@ public class HandController : MonoBehaviour
             aPinky.SetBool("Close", true);
             fingers = fingers + 1;
             PickUp();
-
+            PlayFingerSnd(0);
         }
         else if (Input.GetKeyUp("q") || Input.GetKeyUp("a"))
         {
@@ -113,7 +114,7 @@ public class HandController : MonoBehaviour
             aRing.SetBool("Close", true);
             fingers = fingers + 1;
             PickUp();
-
+            PlayFingerSnd(1);
         }
         else if (Input.GetKeyUp("s"))
         {
@@ -128,7 +129,7 @@ public class HandController : MonoBehaviour
             aMiddle.SetBool("Close", true);
             fingers = fingers + 1;
             PickUp();
-
+            PlayFingerSnd(2);
         }
         else if (Input.GetKeyUp("d"))
         {
@@ -143,6 +144,7 @@ public class HandController : MonoBehaviour
             aIndex.SetBool("Close", true);
             fingers = fingers + 1;
             PickUp();
+            PlayFingerSnd(3);
         }
         else if (Input.GetKeyUp("f"))
         {
@@ -156,6 +158,7 @@ public class HandController : MonoBehaviour
             aThumb.SetBool("Close", true);
             fingers = fingers + 1;
             PickUp();
+            PlayFingerSnd(4);
         }
         else if (Input.GetKeyUp("space"))
         {
@@ -172,8 +175,8 @@ public class HandController : MonoBehaviour
         {
             FixedJoint fj = grabArea.objectInRange.AddComponent<FixedJoint>();
             fj.connectedBody = wristRB;
-            fj.breakForce = 400;
-            fj.breakTorque = 400;
+            fj.breakForce = 600;
+            fj.breakTorque = 600;
             if (grabArea.objectInRange.name == "Cereal_box")
             {
                 grabArea.objectInRange.gameObject.GetComponent<CerealBox>().pickedUp = true;
@@ -203,6 +206,10 @@ public class HandController : MonoBehaviour
                 grabArea.objectInRange.GetComponent<FixedJoint>().breakTorque = grabArea.objectInRange.GetComponent<FixedJoint>().breakTorque - grabStrength;
             }
         }
+    }
+    public void PlayFingerSnd(int sndIndex)
+    {
+        fingerSnd[sndIndex].Play();
     }
     public static float map(float value, float leftMin, float leftMax, float rightMin, float rightMax)
     {

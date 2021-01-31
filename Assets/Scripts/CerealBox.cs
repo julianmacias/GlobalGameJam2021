@@ -4,14 +4,15 @@ using UnityEngine;
 
 public class CerealBox : MonoBehaviour
 {
-    public GameObject normalKey;
+    public GameObject key;
     public Transform spawnPoint;
     private int keyCount = 0;
     public bool pickedUp = false;
     private bool spawnClear = true;
+    public float positionTrigger = -0.25f;
     void Update()
     {
-        if(spawnPoint.position.y < transform.position.y - 0.25)
+        if(spawnPoint.position.y < transform.position.y + positionTrigger)
         {
             if(spawnClear == true)
             StartCoroutine(KeyDelay());
@@ -21,7 +22,7 @@ public class CerealBox : MonoBehaviour
     {
         spawnClear = false;
         yield return new WaitForSeconds(0.1f);
-        GameObject newKey = Instantiate(normalKey, spawnPoint.position, Quaternion.Euler(Random.Range(-180f, 180f), Random.Range(-180f, 180f), Random.Range(-180f, 180f)));
+        GameObject newKey = Instantiate(key, spawnPoint.position, Quaternion.Euler(Random.Range(-180f, 180f), Random.Range(-180f, 180f), Random.Range(-180f, 180f)));
         newKey.name = "Key";
         keyCount = keyCount + 1;
         if (keyCount > 50)
